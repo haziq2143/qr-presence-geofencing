@@ -10,7 +10,11 @@ class Attendance_Record extends Model
     protected $fillable = [
         'student_id',
         'attendance_id',
-        'description'
+        'description',
+        'latitude',
+        'longitude',
+        'distance_from_school',
+        'user_id'
     ];
 
     public function attendance()

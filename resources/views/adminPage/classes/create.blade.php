@@ -1,33 +1,56 @@
 <x-admin-layout>
-    <div class="w-full">
-        <h1 class="text-center text-xl text-yellow-500 font-bold pt-3">Add Class</h1>
-        <div class="md:w-1/2 mx-auto md:px-0 px-5 py-5">
-            <form action="/classes" method="POST">
+    <div class="w-full max-w-2xl mx-auto px-4 md:px-0 py-8">
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg shadow-lg p-8 mb-8">
+            <h1 class="text-3xl font-bold text-white mb-2">Tambah Kelas Baru</h1>
+            <p class="text-purple-100">Lengkapi form dibawah untuk menambahkan kelas baru</p>
+        </div>
+
+        <!-- Form Card -->
+        <div class="bg-white rounded-lg shadow-lg p-8">
+            <form action="/classes" method="POST" class="space-y-6">
                 @csrf
-                <label for="class" class="text-lg font-semibold text-yellow-500">Class:</label>
-                <input type="text" name="class" id="class"
-                    class=" w-full px-1 py-2 rounded-md ring-1 ring-yellow-300 focus:bg-yellow-100 mb-3">
-                @error('class')
-                    <p class="text-sm font-semibold text-red-500 mb-2">{{ $message }}</p>
-                @enderror
-                <label for="class" class="text-lg font-semibold text-yellow-500">Homeroom:</label>
-                <select name="teacher_id" id="teacher"
-                    class=" w-full px-1 py-2 rounded-md ring-1 ring-yellow-300 focus:bg-yellow-100 mb-2">
-                    @foreach ($teachers as $teacher)
-                        <option value="{{ $teacher->id }}">{{ $teacher->name }}</option>
-                    @endforeach
-                </select>
-                @error('teacher_id')
-                    <p class="text-sm font-semibold text-red-500 mb-2">{{ $message }}</p>
-                @enderror
-                <div class="flex items-center">
-                    <button type="submit" class="px-4 py-3 bg-yellow-500 rounded-md text-white mx-2">Add
-                        Class</button>
-                    <p>Or</p>
-                    <a href="/students/upload" class="px-4 py-3 bg-yellow-500 rounded-md text-white mx-2">Upload
-                        File</a>
+
+                <!-- Class Name -->
+                <div>
+                    <label for="class" class="block text-sm font-semibold text-gray-700 mb-2">Nama Kelas</label>
+                    <input type="text" name="class" id="class" placeholder="Contoh: X-A, XI-B"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                        value="{{ old('class') }}">
+                    @error('class')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
+                <!-- Homeroom Teacher -->
+                <div>
+                    <label for="teacher_id" class="block text-sm font-semibold text-gray-700 mb-2">Wali Kelas</label>
+                    <select name="teacher_id" id="teacher_id"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition">
+                        <option value="">-- Pilih Wali Kelas --</option>
+                        @foreach ($teachers as $teacher)
+                            <option value="{{ $teacher->id }}"
+                                {{ old('teacher_id') == $teacher->id ? 'selected' : '' }}>
+                                {{ $teacher->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('teacher_id')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Buttons -->
+                <div class="flex gap-4 pt-4">
+                    <button type="submit"
+                        class="flex-1 px-6 py-3 bg-purple-500 hover:bg-purple-600 text-white font-semibold rounded-lg transition duration-200 shadow-md">
+                        Simpan Kelas
+                    </button>
+                    <a href="/classes"
+                        class="flex-1 px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white font-semibold rounded-lg transition duration-200 shadow-md text-center">
+                        Batal
+                    </a>
+                </div>
             </form>
         </div>
     </div>

@@ -10,7 +10,8 @@ class Attendance extends Model
         'subject_id',
         'class_id',
         'attendance_date',
-        'attendance_code'
+        'attendance_code',
+        'type'
     ];
 
     public function subject()

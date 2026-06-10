@@ -4,6 +4,7 @@ namespace App\Imports;
 
 use App\Models\User;
 use App\Models\Kelas;
+use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Concerns\ToModel;
 
 class StudentsImport implements ToModel
@@ -19,7 +20,8 @@ class StudentsImport implements ToModel
             'name' => $row[1],
             'email' => $row[2],
             'role' => 'student',
-            'password' => '123456789',
+            'password' => Hash::make('123456789'),
+            'plain_password' => '123456789',
             'class_id' => Kelas::where('class', 'LIKE', $row[3])->pluck('id')->first()
         ]);
     }

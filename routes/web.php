@@ -32,9 +32,13 @@ Route::middleware(['admin'])->group(function () {
 });
 
 Route::middleware(['teacher'])->group(function () {
+    Route::get('/attendances/recap', [AttendanceController::class, 'recapForm'])->name('attendances.recap.form');
+    Route::get('/attendances/recap/download', [AttendanceController::class, 'downloadRecap'])->name('attendances.recap.download');
     Route::resource('/attendances',  AttendanceController::class);
+    Route::get('/api/attendance/{attendance}/qr', [AttendanceController::class, 'generateQr'])->name('attendance.qr');
 });
 
+Route::get('/api/attendance/type/{code}', [AttendanceController::class, 'getType']);
 Route::resource('/record',  RecordController::class);
 Route::resource('/home', HomeController::class, ['except' => 'create', 'except' => 'store'])->middleware('auth');
 Route::get('/home/create/{attendances_record}', [HomeController::class, 'create']);

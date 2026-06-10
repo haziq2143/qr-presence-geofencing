@@ -20,6 +20,7 @@
                 <x-navbar.nav-link href="/home">Home</x-navbar.nav-link>
                 @if (Auth::user()->role == 'teacher')
                     <x-navbar.nav-link href="/attendances">Attendances</x-navbar.nav-link>
+                    <x-navbar.nav-link href="/attendances/recap">Rekap Absen</x-navbar.nav-link>
                 @endif
 
                 @if (Auth::user()->role == 'student')

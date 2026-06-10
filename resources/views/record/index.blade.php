@@ -1,84 +1,81 @@
 <x-app-layout>
-    <h1 class="text-2xl font-bold text-yellow-500 text-center">Absensi</h1>
-    <a href="/attendances/create" class="mx-5 px-4 py-3 bg-yellow-300 font-semibold rounded-md">Tambah Absensi</a>
-    <div class="relative overflow-x-auto  mx-auto md:p-10">
-        <table class="w-full  text-sm text-left rtl:text-right ">
-            <thead class="text-xs text-black uppercase bg-yellow-300 ">
-                <tr>
-                    <th scope="col" class="md:px-6 md:py-3 px-3 py-2">
-                        Pelajaran
-                    </th>
-                    <th scope="col" class="md:px-6 md:py-3 px-3 py-2">
-                        class
-                    </th>
-                    <th scope="col" class="md:px-6 md:py-3 px-3 py-2">
-                        class
-                    </th>
-                    <th scope="col" class="md:px-6 md:py-3 px-3 py-2">
-                        Action
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
+    <div class="w-full px-4 md:px-0">
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg shadow-lg p-6 mb-6">
+            <h1 class="text-3xl font-bold text-white mb-2">Absensi Tersedia</h1>
+            <p class="text-blue-100">Pilih sesi absensi untuk dicatat</p>
+        </div>
 
-                @foreach ($attendances as $index => $attendance)
-                    @if ($index % 2 == 0)
-                        <tr class="bg-yellow-100 border-b ">
-                            <th scope="row"
-                                class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+        <!-- Action Button -->
+        @if (Auth::user()->role !== 'student')
+            <div class="flex justify-end mb-6">
+                <a href="/attendances/create"
+                    class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md transition duration-200">
+                    ➕ Buat Absensi Baru
+                </a>
+            </div>
+        @endif
+
+        <!-- Table -->
+        <div class="relative overflow-x-auto rounded-lg shadow-lg">
+            <table class="w-full text-sm text-left">
+                <thead class="text-xs text-white uppercase bg-blue-700">
+                    <tr>
+                        <th scope="col" class="px-6 py-4 font-semibold">Mata Pelajaran</th>
+                        <th scope="col" class="px-6 py-4 font-semibold">Kelas</th>
+                        <th scope="col" class="px-6 py-4 font-semibold">Tanggal</th>
+                        <th scope="col" class="px-6 py-4 font-semibold text-center">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($attendances as $index => $attendance)
+                        <tr
+                            class="{{ $index % 2 == 0 ? 'bg-blue-50/50' : 'bg-white' }} border-b hover:bg-blue-100/30 transition duration-150">
+                            <td class="px-6 py-4 font-medium text-gray-900">
                                 {{ $attendance->subject->subject }}
-                            </th>
-                            <td class="px-6 py-4">
-                                {{ $attendance->class->class }}
+                                @if ($attendance->type === 'online')
+                                    <span class="ml-2 bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded-full font-semibold">Online</span>
+                                @else
+                                    <span class="ml-2 bg-gray-100 text-gray-800 text-xs px-2 py-0.5 rounded-full font-semibold">Offline</span>
+                                @endif
                             </td>
                             <td class="px-6 py-4">
-                                {{ $attendance->attendance_date }}
-
+                                <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+                                    {{ $attendance->class->class }}
+                                </span>
                             </td>
-
-                            @if ($record->contains('attendance_id', $attendance->id))
-                                <td class="px-6 py-4">
-                                    Sudah Absen
-                                </td>
-                            @else
-                                <td class="px-6 py-4">
-                                    <a href="/record/create" class="text-blue-500 hover:text-yellow-700">Absen</a>
-                                </td>
-                            @endif
-
-
+                            <td class="px-6 py-4 text-gray-700">
+                                {{ \Carbon\Carbon::parse($attendance->attendance_date)->format('d M Y') }}</td>
+                            <td class="px-6 py-4 text-center">
+                                @if ($record->contains('attendance_id', $attendance->id))
+                                    <span
+                                        class="inline-block px-4 py-2 bg-green-200 text-green-800 rounded-md font-medium text-sm">
+                                        ✓ Sudah Absen
+                                    </span>
+                                @else
+                                    @if (Auth::user()->role === 'student')
+                                        <a href="/record/create"
+                                            class="inline-block px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-medium text-sm transition duration-200">
+                                            Scan QR
+                                        </a>
+                                    @else
+                                        <a href="/home/create/{{ $attendance->id }}"
+                                            class="inline-block px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-medium text-sm transition duration-200">
+                                            Input Absen
+                                        </a>
+                                    @endif
+                                @endif
+                            </td>
                         </tr>
-                    @else
-                        <tr class="bg-yellow-100 border-b ">
-                            <th scope="row"
-                                class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                {{ $attendance->subject->subject }}
-                            </th>
-                            <td class="px-6 py-4">
-                                {{ $attendance->class->class }}
+                    @empty
+                        <tr>
+                            <td colspan="4" class="px-6 py-8 text-center text-gray-500">
+                                <p class="text-lg">Tidak ada sesi absensi</p>
                             </td>
-                            <td class="px-6 py-4">
-                                {{ $attendance->attendance_date }}
-                            </td>
-
-                            @if ($record->contains('attendance_id', $attendance->id))
-                                <td class="px-6 py-4">
-                                    Sudah Absen
-                                </td>
-                            @else
-                                <td class="px-6 py-4">
-                                    <a href="/record/create" class="text-blue-500 hover:text-yellow-700">Absen</a>
-                                </td>
-                            @endif
-
                         </tr>
-                    @endif
-                @endforeach
-
-
-            </tbody>
-        </table>
-        <div class="py-5 text-yellow-500">
+                    @endforelse
+                </tbody>
+            </table>
         </div>
     </div>
 </x-app-layout>

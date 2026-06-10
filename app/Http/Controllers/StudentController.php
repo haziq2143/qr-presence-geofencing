@@ -42,6 +42,7 @@ class StudentController extends Controller
             'password' => 'required|min:8|max:20',
             'class_id' => 'required'
         ]);
+        $validated['plain_password'] = $validated['password'];
         $validated['password'] = Hash::make($validated['password']);
         $validated['role'] = 'student';
 
@@ -96,6 +97,13 @@ class StudentController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $student = User::findOrFail($id);
+        
+        // Hapus data absensi terkait agar tidak terjadi error foreign key
+        \App\Models\Attendance_Record::where('student_id', $id)->orWhere('user_id', $id)->delete();
+
+        $student->delete();
+
+        return redirect('/students')->with('success', 'Data siswa berhasil dihapus.');
     }
 }

@@ -47,6 +47,9 @@
                                 </span>
                             </td>
                             <td class="px-6 py-4 text-gray-700">
+                                <a href="/students/{{ $student->id }}/edit" class="inline-block px-3 py-1 bg-yellow-500 hover:bg-yellow-600 text-white rounded shadow text-sm transition duration-150 mr-1">
+                                    Edit
+                                </a>
                                 <form action="{{ route('students.destroy', $student->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data siswa ini?');">
                                     @csrf
                                     @method('DELETE')

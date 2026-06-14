@@ -17,21 +17,20 @@
         <div class="hidden w-full md:block md:w-auto" id="navbar-default">
             <ul
                 class="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white ">
-                <x-navbar.nav-link href="/home">Home</x-navbar.nav-link>
-                @if (Auth::user()->role == 'teacher')
-                    <x-navbar.nav-link href="/attendances">Attendances</x-navbar.nav-link>
-                    <x-navbar.nav-link href="/attendances/recap">Rekap Absen</x-navbar.nav-link>
-                @endif
-
-                @if (Auth::user()->role == 'student')
-                    <x-navbar.nav-link href="/record">Attendance</x-navbar.nav-link>
-                @endif
-
                 @auth
+                    <x-navbar.nav-link href="/home">Home</x-navbar.nav-link>
+                    @if (Auth::user()->role == 'teacher')
+                        <x-navbar.nav-link href="/attendances">Attendances</x-navbar.nav-link>
+                        <x-navbar.nav-link href="/attendances/recap">Rekap Absen</x-navbar.nav-link>
+                    @endif
+
+                    @if (Auth::user()->role == 'student')
+                        <x-navbar.nav-link href="/record">Attendance</x-navbar.nav-link>
+                    @endif
+
                     <x-navbar.nav-link href="/logout">Logout</x-navbar.nav-link>
                 @else
-                    <x-navbar.nav-link>Login</x-navbar.nav-link>
-
+                    <x-navbar.nav-link href="/">Login</x-navbar.nav-link>
                 @endauth
             </ul>
         </div>

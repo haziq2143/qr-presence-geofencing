@@ -53,7 +53,9 @@ class SubjectController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $subject = Subject::findOrFail($id);
+        $teachers = User::where('role', 'teacher')->get();
+        return view('adminPage.subject.edit', compact('subject', 'teachers'));
     }
 
     /**
@@ -61,7 +63,16 @@ class SubjectController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $subject = Subject::findOrFail($id);
+
+        $validated = $request->validate([
+            'subject' => 'required|max:255',
+            'teacher_id' => 'required|exists:users,id'
+        ]);
+
+        $subject->update($validated);
+
+        return redirect('/subjects')->with('success', 'Mata pelajaran berhasil diperbarui.');
     }
 
     /**
@@ -69,6 +80,16 @@ class SubjectController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $subject = Subject::findOrFail($id);
+
+        $attendanceCount = \App\Models\Attendance::where('subject_id', $id)->count();
+
+        if ($attendanceCount > 0) {
+            return redirect('/subjects')->with('error', 'Mata pelajaran tidak dapat dihapus karena sudah memiliki data absensi.');
+        }
+
+        $subject->delete();
+
+        return redirect('/subjects')->with('success', 'Mata pelajaran berhasil dihapus.');
     }
 }

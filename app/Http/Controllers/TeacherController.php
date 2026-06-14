@@ -63,16 +63,24 @@ class TeacherController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, User $teacher)
+    public function update(Request $request, string $id)
     {
+        $teacher = User::where('role', 'teacher')->findOrFail($id);
+
         $validated = $request->validate([
-            'name' => 'required',
-            'email' => 'required',
-            'password' => 'required|min:4'
+            'name' => 'required|max:255',
+            'email' => 'required|email|unique:users,email,' . $id,
+            'password' => 'nullable|min:8|max:30'
         ]);
 
+        if ($request->filled('password')) {
+            $validated['password'] = Hash::make($request->password);
+        } else {
+            unset($validated['password']);
+        }
+
         $teacher->update($validated);
-        return redirect('/teachers');
+        return redirect('/teachers')->with('success', 'Data guru berhasil diperbarui.');
     }
 
     /**
@@ -80,6 +88,16 @@ class TeacherController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $teacher = User::where('role', 'teacher')->findOrFail($id);
+
+        $classCount = \App\Models\Kelas::where('teacher_id', $id)->count();
+        $subjectCount = \App\Models\Subject::where('teacher_id', $id)->count();
+
+        if ($classCount > 0 || $subjectCount > 0) {
+            return redirect('/teachers')->with('error', 'Guru tidak dapat dihapus karena masih mengajar kelas atau mata pelajaran.');
+        }
+
+        $teacher->delete();
+        return redirect('/teachers')->with('success', 'Data guru berhasil dihapus.');
     }
 }

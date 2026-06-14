@@ -33,7 +33,17 @@
             <nav aria-label="alternative nav">
                 <x-admin.sidebar></x-admin.sidebar>
             </nav>
-            <section id="main" class="main-content w-full bg-gray-100 mt-12 md:mt-2 pb-24 md:pb-5">
+            <section id="main" class="main-content w-full bg-gray-100 mt-12 md:mt-2 pb-24 md:pb-5 p-5">
+                @if (session('success'))
+                    <div class="m-6 p-4 bg-green-100 border-l-4 border-green-500 text-green-700 rounded shadow-md">
+                        <p class="font-semibold">{{ session('success') }}</p>
+                    </div>
+                @endif
+                @if (session('error'))
+                    <div class="m-6 p-4 bg-red-100 border-l-4 border-red-500 text-red-700 rounded shadow-md">
+                        <p class="font-semibold">{{ session('error') }}</p>
+                    </div>
+                @endif
 
                 {{ $slot }}
             </section>

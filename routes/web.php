@@ -20,7 +20,11 @@ Route::get('/logout', [AuthController::class, 'logout']);
 
 Route::middleware(['admin'])->group(function () {
     Route::get('/admin', function () {
-        return  view('adminPage.admin');
+        $studentCount = \App\Models\User::where('role', 'student')->count();
+        $teacherCount = \App\Models\User::where('role', 'teacher')->count();
+        $classCount = \App\Models\Kelas::count();
+        $subjectCount = \App\Models\Subject::count();
+        return view('adminPage.admin', compact('studentCount', 'teacherCount', 'classCount', 'subjectCount'));
     });
     Route::get('/exporth', [ExportController::class, 'export_excel']);
     Route::get('/students/upload', [StudentController::class, 'upload']);
@@ -39,7 +43,7 @@ Route::middleware(['teacher'])->group(function () {
 });
 
 Route::get('/api/attendance/type/{code}', [AttendanceController::class, 'getType']);
-Route::resource('/record',  RecordController::class);
+Route::resource('/record',  RecordController::class)->middleware('auth');
 Route::resource('/home', HomeController::class, ['except' => 'create', 'except' => 'store'])->middleware('auth');
-Route::get('/home/create/{attendances_record}', [HomeController::class, 'create']);
-Route::post('/home/store/{attendances_record}', [HomeController::class, 'store']);
+Route::get('/home/create/{attendances_record}', [HomeController::class, 'create'])->middleware('auth');
+Route::post('/home/store/{attendances_record}', [HomeController::class, 'store'])->middleware('auth');

@@ -81,7 +81,9 @@ class StudentController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $student = User::where('role', 'student')->findOrFail($id);
+        $classes = Kelas::query()->get();
+        return view('adminPage.students.edit', compact('student', 'classes'));
     }
 
     /**
@@ -89,7 +91,25 @@ class StudentController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $student = User::where('role', 'student')->findOrFail($id);
+
+        $validated = $request->validate([
+            'name' => 'required|max:255',
+            'email' => 'required|email|unique:users,email,' . $id,
+            'password' => 'nullable|min:8|max:20',
+            'class_id' => 'required'
+        ]);
+
+        if ($request->filled('password')) {
+            $validated['plain_password'] = $request->password;
+            $validated['password'] = Hash::make($request->password);
+        } else {
+            unset($validated['password']);
+        }
+
+        $student->update($validated);
+
+        return redirect('/students')->with('success', 'Data siswa berhasil diperbarui.');
     }
 
     /**
